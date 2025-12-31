@@ -1,89 +1,103 @@
-Cloud Computing CA1 – Cloud Run CI/CD Application
-Overview
+# Cloud Computing CA1 – Cloud Run CI/CD Application
 
-This repository contains a cloud-native Node.js web application developed for Cloud Computing CA1.
-The application is fully containerised and deployed on Google Cloud Platform (GCP) using a modern CI/CD pipeline.
+## Overview
 
-The project demonstrates the use of serverless compute, managed NoSQL storage, container registries, and automated deployments in line with CA1 requirements.
+This repository contains a **cloud-native Node.js web application** developed for **Cloud Computing CA1**.  
+The application is fully containerised and deployed on **Google Cloud Platform (GCP)** using an automated **CI/CD pipeline**.
 
-Core Requirements Coverage
-1. Google Cloud Services Used
+The project demonstrates practical use of **serverless computing**, **managed NoSQL storage**, **containerisation**, and **continuous deployment** in line with the CA1 specification.
 
-Cloud Run
-Hosts the containerised Node.js service and provides automatic scaling based on incoming traffic.
+---
 
-Firestore (NoSQL Database)
-Stores submitted form data in a collection used by the application backend.
+## Core Requirements Coverage
 
-Cloud Build
-Implements continuous integration and deployment triggered by GitHub commits.
+### Google Cloud Services Used
 
-Artifact Registry
-Stores versioned Docker images built during the CI/CD process.
+- **Cloud Run**  
+  Hosts the containerised Node.js application and provides automatic scaling based on incoming traffic.
 
-Secret Manager
-Handles sensitive credentials securely at runtime (no secrets stored in source control).
+- **Firestore (NoSQL Database)**  
+  Stores submitted form data from the application backend.
 
-Automated Deployment Pipeline
+- **Cloud Build**  
+  Implements continuous integration and deployment triggered by GitHub commits.
 
-The application is deployed automatically using Cloud Build triggers.
+- **Artifact Registry**  
+  Stores versioned Docker images generated during the CI/CD pipeline.
 
-Pipeline Flow
+- **Secret Manager**  
+  Manages sensitive credentials securely at runtime without exposing them in source control.
 
-Commit pushed to the main branch
+---
 
-Cloud Build executes cloudbuild.yaml
+## Automated Deployment Pipeline
 
-Docker image is built
+The application is deployed automatically using **Cloud Build triggers** connected to the GitHub repository.
 
-Image is pushed to Artifact Registry
+### Deployment Flow
 
-Cloud Run service is deployed with the new image
+1. A commit is pushed to the `main` branch  
+2. Cloud Build executes `cloudbuild.yaml`  
+3. Docker image is built  
+4. Image is pushed to Artifact Registry  
+5. Cloud Run service is deployed with the new image  
 
-This ensures:
+This approach ensures:
+- No manual deployments
+- Fully repeatable builds
+- Clear execution history via Cloud Build
 
-No manual deployments
+---
 
-Fully repeatable builds
+## Infrastructure Configuration
 
-Clear audit trail in Cloud Build history
+- **Dockerfile**  
+  Packages the application using `node:20-alpine` as the base image.
 
-Infrastructure Configuration
+- **cloudbuild.yaml**  
+  Defines build, push, and deployment steps with region-based configuration.
 
-Dockerfile
-Packages the application using node:20-alpine as the base image.
+- **Cloud Run**  
+  Manages scaling, networking, and service availability declaratively.
 
-cloudbuild.yaml
-Defines the build, push, and deployment steps with regional configuration.
+---
 
-Cloud Run
-Handles scaling, networking, and service availability declaratively.
+## Application Endpoints
 
-Application Endpoints
-Method	Path	Description
-GET	/	Serves the HTML form UI
-POST	/submit	Accepts form data and writes to Firestore
-Local Development
+| Method | Path      | Description                                |
+|------|-----------|--------------------------------------------|
+| GET  | `/`       | Serves the HTML form user interface         |
+| POST | `/submit` | Accepts form data and writes to Firestore  |
+
+---
+
+## Local Development
+
+```bash
 git clone https://github.com/mikeeggg/CloudCA1.git
 cd CloudCA1
 npm install
 npm start
+```
+---
 
-
-Application runs locally on:
-
+The application runs locally at:
 http://localhost:8080
 
-One-Time GCP Provisioning
-Artifact Registry
+## One-Time GCP Provisioning 
+
+Artifact Registery 
+
+```bash
 gcloud artifacts repositories create cloud-run \
   --location=europe-west1 \
   --repository-format=docker
+```
 
-IAM Permissions
+## IAM Permissions 
 
-The Cloud Build service account was granted:
-
+The cloud Build service account was granted the following roles:
+```bash
 roles/run.admin
 
 roles/artifactregistry.writer
@@ -91,42 +105,50 @@ roles/artifactregistry.writer
 roles/secretmanager.secretAccessor
 
 roles/iam.serviceAccountUser
+```
+These permissions enable secure build, deployment, and secret access.
 
-Security Considerations
+## Security Considerations
 
 Sensitive credentials are excluded from Git using .gitignore
 
-Secrets are injected at runtime via Secret Manager
+Secrets are injected at runtime using Secret Manager
 
 IAM roles follow the principle of least privilege
 
 No credentials are baked into Docker images
 
-Cost Analysis
+## Cost Analysis
 
-This project relies entirely on serverless and managed services, keeping operational costs minimal.
+This project uses serverless and managed Google Cloud services, resulting in minimal operating costs.
 
-Service	Cost Model	Estimated Cost
-Cloud Run	Pay per request / compute time	$0 – $1 / mo
-Firestore	Free tier usage	$0
-Artifact Registry	Free tier storage	$0
+| Service           | Pricing Model                  | Estimated Cost  |
+| ----------------- | ------------------------------ | --------------- |
+| Cloud Run         | Pay per request / compute time | $0 – $1 / month |
+| Firestore         | Free tier usage                | $0              |
+| Artifact Registry | Free tier storage              | $0              |
 
-The application remains well within free tiers for coursework usage.
+The application remains within free tiers for standard coursework usage.
 
-Deployment Evidence
+## Deployment Evidence
 
-Cloud Build successful execution
+Cloud Build execution completed successfully
+<img width="2048" height="1224" alt="3755d329-ff00-4462-8e66-e0f63dd2536a" src="https://github.com/user-attachments/assets/70e9fda5-d753-4e22-beef-9de40a6d0a9c" />
+
 
 Docker image stored in Artifact Registry
+<img width="2048" height="1214" alt="3d5529b1-b1cb-459d-b234-ca33c4ebbdb9" src="https://github.com/user-attachments/assets/6834e3b9-ddb3-4979-94ac-452fba794247" />
 
 Cloud Run service active and serving traffic
+<img width="2048" height="1123" alt="f65074ee-ce9c-4d29-8c1e-53762d78e475" src="https://github.com/user-attachments/assets/825b8590-2117-4301-a902-884720e1546b" />
 
-Public URL accessible
 
-Live Application URL:
-https://cloudca1-272999851790.europe-west1.run.app
+Public application URL accessible
+<img width="2048" height="1242" alt="95aefd91-79de-45b2-a833-944ad1157919" src="https://github.com/user-attachments/assets/1110a6d9-ed62-48dc-b42d-3bbe279179b1" />
 
-AI Tool Usage Declaration
+Live Application URL: https://cloudca1-272999851790.europe-west1.run.app/
+
+## AI Tool Usage Declaration
 
 AI tools (ChatGPT and GitHub Copilot) were used to assist with:
 
