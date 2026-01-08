@@ -155,6 +155,9 @@ Public application URL accessible
 
 <img width="2879" height="1727" alt="Screenshot 2026-01-08 020707" src="https://github.com/user-attachments/assets/f0058626-d051-4ac9-9f07-952170c51b21" />
 
+<img width="2879" height="1592" alt="Screenshot 2026-01-08 110541" src="https://github.com/user-attachments/assets/ed6f5c54-1910-4398-b65d-e2bcb502191b" />
+
+
 Live Application URL: https://cloudca1-272999851790.europe-west1.run.app/
 
 ## AI Tool Usage Declaration
@@ -168,4 +171,5 @@ CI/CD configuration validation
 Debugging deployment issues
 
 All implementation decisions were reviewed and executed manually.
+
 
