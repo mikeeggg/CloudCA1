@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/mikeeggg/CloudCA1#readme",
   "dependencies": {
+    "@google-cloud/firestore": "^8.0.0",
     "body-parser": "^2.2.1",
     "express": "^5.2.1",
     "pg": "^8.16.3"
