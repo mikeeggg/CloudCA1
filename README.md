@@ -17,7 +17,7 @@ The project demonstrates practical use of **serverless computing**, **managed No
   Hosts the containerised Node.js application and provides automatic scaling based on incoming traffic.
 
 - **Firestore (NoSQL Database)**  
-  Stores submitted form data from the application backend.
+  Stores submitted form data from the application backend in a fully managed, schema-less database.
 
 - **Cloud Build**  
   Implements continuous integration and deployment triggered by GitHub commits.
@@ -25,8 +25,8 @@ The project demonstrates practical use of **serverless computing**, **managed No
 - **Artifact Registry**  
   Stores versioned Docker images generated during the CI/CD pipeline.
 
-- **Secret Manager**  
-  Manages sensitive credentials securely at runtime without exposing them in source control.
+- **IAM (Identity and Access Management)**  
+  Manages secure service-to-service authentication using service accounts and role-based access control.
 
 ---
 
@@ -52,22 +52,25 @@ This approach ensures:
 ## Infrastructure Configuration
 
 - **Dockerfile**  
-  Packages the application using `node:20-alpine` as the base image.
+  Packages the application using a lightweight Node.js base image.
 
 - **cloudbuild.yaml**  
-  Defines build, push, and deployment steps with region-based configuration.
+  Defines build, push, and deployment steps with region-based configuration and Cloud Logging enabled.
 
 - **Cloud Run**  
   Manages scaling, networking, and service availability declaratively.
+
+- **Firestore (Native Mode)**  
+  Provides persistent storage for application data without requiring schema management.
 
 ---
 
 ## Application Endpoints
 
-| Method | Path      | Description                                |
-|------|-----------|--------------------------------------------|
-| GET  | `/`       | Serves the HTML form user interface         |
-| POST | `/submit` | Accepts form data and writes to Firestore  |
+| Method | Path      | Description                                      |
+|------|-----------|--------------------------------------------------|
+| GET  | `/`       | Serves the HTML form user interface               |
+| POST | `/submit` | Accepts form data and writes it to Firestore     |
 
 ---
 
@@ -93,30 +96,34 @@ gcloud artifacts repositories create cloud-run \
   --location=europe-west1 \
   --repository-format=docker
 ```
+Firestore
+
+Firestore was created in Native Mode and used as the application database.
+A collection is created automatically when the application writes data.
 
 ## IAM Permissions 
 
 The cloud Build service account was granted the following roles:
 ```bash
 roles/run.admin
-
 roles/artifactregistry.writer
-
-roles/secretmanager.secretAccessor
-
 roles/iam.serviceAccountUser
 ```
-These permissions enable secure build, deployment, and secret access.
+##Cloud Run Service Account
+roles/datastore.user
+These permissions allow Cloud Run to securely read and write data to Firestore without exposing credentials.
 
 ## Security Considerations
 
-Sensitive credentials are excluded from Git using .gitignore
+No API keys or credentials are stored in source code
 
-Secrets are injected at runtime using Secret Manager
+Authentication is handled via IAM service accounts
 
-IAM roles follow the principle of least privilege
+Firestore access is restricted using role-based permissions
 
 No credentials are baked into Docker images
+
+The principle of least privilege is applied
 
 ## Cost Analysis
 
@@ -146,6 +153,8 @@ Cloud Run service active and serving traffic
 Public application URL accessible
 <img width="2048" height="1242" alt="95aefd91-79de-45b2-a833-944ad1157919" src="https://github.com/user-attachments/assets/1110a6d9-ed62-48dc-b42d-3bbe279179b1" />
 
+<img width="2879" height="1727" alt="Screenshot 2026-01-08 020707" src="https://github.com/user-attachments/assets/f0058626-d051-4ac9-9f07-952170c51b21" />
+
 Live Application URL: https://cloudca1-272999851790.europe-west1.run.app/
 
 ## AI Tool Usage Declaration
@@ -159,3 +168,4 @@ CI/CD configuration validation
 Debugging deployment issues
 
 All implementation decisions were reviewed and executed manually.
+
